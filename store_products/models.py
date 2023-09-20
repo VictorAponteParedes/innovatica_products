@@ -11,3 +11,27 @@ class Usuario(AbstractUser):
     )
 
     aprobado = models.CharField(max_length=12, choices=APROBADO_CHOICES, default='desaprobado')
+
+
+
+class Categoria(models.Model):
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
+
+
+class Producto(models.Model):
+    nombre = models.CharField(max_length=255)
+    categoria = models.ManyToManyField("Categoria", related_name="products")
+    estado = models.CharField(
+        max_length=20,
+        choices=[("nuevo", "Nuevo"), ("semi_nuevo", "Semi Nuevo"), ("usado", "Usado")],
+        default="nuevo",
+    )
+    imagen = models.ImageField(upload_to="productos/", blank=True, null=True)
+
+    def __str__(self):
+        return self.nombre
+    
+    
