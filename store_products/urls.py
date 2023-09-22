@@ -21,6 +21,8 @@ routers.register(r"productos", ProductoViewSet, basename="productos")
 urlpatterns = [
     path("", include(routers.urls)),
     path("registrar_usuario/", registrar_usuario, name="registrar_usuario"),
+
+    #Al poner el username y password en esta (url )nos generara un token para hacer las peticiones
     path('token/', jwt_views.TokenObtainPairView.as_view(), name='obtain_token'),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]

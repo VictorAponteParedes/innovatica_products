@@ -1,11 +1,17 @@
-#IMPORTANDO LOS MODULOS REST FRAMEWORK
-from rest_framework.decorators import api_view
+# IMPORTANDO LOS MODULOS REST FRAMEWORK
+from rest_framework.decorators import (
+    api_view,
+    action,
+    authentication_classes,
+    permission_classes,
+)
+
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import viewsets
+from rest_framework import status, viewsets
+from rest_framework_simplejwt.tokens import AccessToken
 
-#IMPORTANDO LOS MODULOS INTERNOS
+# IMPORTANDO LOS MODULOS INTERNOS
 from .models import Usuario, Categoria, Producto
 from .serializers import (
     UsuarioSerializer,
@@ -32,9 +38,7 @@ def registrar_usuario(request):
             )
 
         # Crear un nuevo usuario personalizado
-        usuario = Usuario.objects.create_superuser(
-            username=username, password=password
-        )
+        usuario = Usuario.objects.create_superuser(username=username, password=password)
 
         usuario.save()
 
@@ -82,8 +86,9 @@ class ProductoViewSet(viewsets.ModelViewSet):
         return queryset
 
     def get_serializer_class(self):
+        # Valido si el usuario tiene token y si esta aprobado
         if (
-            self.request.user.is_authenticated
+            "Authorization" in self.request.headers
             and self.request.user.aprobado == "aprobado"
         ):
             return ProductoSerializer
@@ -110,22 +115,10 @@ class ProductoViewSet(viewsets.ModelViewSet):
             )
 
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop("partial", False)
         instance = self.get_object()
-
-        # Verificar si el usuario está autenticado y aprobado
-        if (
-            self.request.user.is_authenticated
-            and self.request.user.aprobado == "aprobado"
-        ):
-            serializer = self.get_serializer(
-                instance, data=request.data, partial=partial
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(
-                {"error": "No tienes permiso para actualizar este producto."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=kwargs.pop("partial", False)
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
