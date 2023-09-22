@@ -32,12 +32,10 @@ def registrar_usuario(request):
             )
 
         # Crear un nuevo usuario personalizado
-        usuario = Usuario.objects.create_user(
+        usuario = Usuario.objects.create_superuser(
             username=username, password=password
         )
 
-        # Modificar el campo de aprobación si es necesario
-        usuario.aprobado = "desaprobado"
         usuario.save()
 
         # Generar tokens JWT
