@@ -5,7 +5,7 @@ from .models import Usuario, Categoria, Producto
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = ["username", "password", "aprobado"]
+        fields = ["username", "password"]
 
 
 class CategoriaSerializer(serializers.ModelSerializer):
@@ -15,7 +15,7 @@ class CategoriaSerializer(serializers.ModelSerializer):
 
 
 class ProductoSerializer(serializers.ModelSerializer):
-    categoria = serializers.StringRelatedField(many=True)
+    categoria = serializers.StringRelatedField()
 
     class Meta:
         model = Producto
@@ -23,7 +23,7 @@ class ProductoSerializer(serializers.ModelSerializer):
 
 
 class ProductosLimitadosSerializer(serializers.ModelSerializer):
-    categoria = serializers.StringRelatedField(many=True)
+    categoria = serializers.StringRelatedField()
 
     class Meta:
         model = Producto

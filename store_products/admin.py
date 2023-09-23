@@ -1,21 +1,21 @@
-#IMPORTANDO MODULOS DE DJANGO
+# IMPORTANDO MODULOS DE DJANGO
 from django.contrib import admin
 from django.utils.html import format_html
 
-#IMPORTANDO MODULOS INTERNOS
+# IMPORTANDO MODULOS INTERNOS
 from .models import Usuario, Producto, Categoria
 
 # Register your models here.
 
+
 class UsuarioAdmin(admin.ModelAdmin):
     list_display = ["username", "aprobado"]
+
 
 admin.site.register(Usuario, UsuarioAdmin)
 
 
-
 admin.site.register(Categoria)
-
 
 
 class ProductoAdmin(admin.ModelAdmin):
@@ -23,10 +23,14 @@ class ProductoAdmin(admin.ModelAdmin):
 
     def mostrar_imagen(self, obj):
         if obj.imagen:
-            return format_html('<img src="{}" style="border-radius: 50%; width: 40px; height: 40px;" />', obj.imagen.url)
+            return format_html(
+                '<img src="{}" style="border-radius: 50%; width: 40px; height: 40px;" />',
+                obj.imagen.url,
+            )
         else:
             return "Sin imagen"
 
     mostrar_imagen.short_description = "Imagen"
+
 
 admin.site.register(Producto, ProductoAdmin)

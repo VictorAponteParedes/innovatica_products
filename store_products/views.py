@@ -31,6 +31,7 @@ def registrar_usuario(request):
         username = data.get("username")
         password = data.get("password")
 
+        # VALIDA CASO EL USUARIO NO COMPLETE LOS CAMPOS NECESARIOS
         if not username or not password:
             return Response(
                 {"error": "Se requieren campos username y password"},
@@ -70,6 +71,10 @@ class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
 
     def get_queryset(self):
+        """
+        Puedo filtrar por nombre, categoria, estado, atra vez de la url
+        ejemplo: http://localhost:8000/api/v1/nombre?
+        """
         queryset = super().get_queryset()
 
         nombre = self.request.query_params.get("nombre", None)
@@ -88,7 +93,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         # Valido si el usuario tiene token y si esta aprobado
         if (
-            "Authorization" in self.request.headers
+            self.request.user.is_authenticated
             and self.request.user.aprobado == "aprobado"
         ):
             return ProductoSerializer

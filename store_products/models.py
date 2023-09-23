@@ -4,14 +4,16 @@ from django.db import models
 
 # Create your models here.
 
+
 class Usuario(AbstractUser):
     APROBADO_CHOICES = (
-        ('aprobado', 'Aprobado'),
-        ('desaprobado', 'Desaprobado'),
+        ("aprobado", "Aprobado"),
+        ("desaprobado", "Desaprobado"),
     )
 
-    aprobado = models.CharField(max_length=12, choices=APROBADO_CHOICES, default='desaprobado')
-
+    aprobado = models.CharField(
+        max_length=12, choices=APROBADO_CHOICES, default="desaprobado"
+    )
 
 
 class Categoria(models.Model):
@@ -23,7 +25,13 @@ class Categoria(models.Model):
 
 class Producto(models.Model):
     nombre = models.CharField(max_length=255)
-    categoria = models.ManyToManyField("Categoria", related_name="products")
+    categoria = models.ForeignKey(
+        Categoria,
+        on_delete=models.CASCADE,
+        related_name="products",
+        null=True,
+        blank=True,
+    )
     estado = models.CharField(
         max_length=20,
         choices=[("nuevo", "Nuevo"), ("semi_nuevo", "Semi Nuevo"), ("usado", "Usado")],
@@ -33,5 +41,12 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre
-    
-    
+
+    def image_img(self):
+        if self.item_image:
+            return '<img src="%s" width="50" height="50" />' % self.imagen.url
+        else:
+            return "(Sin imagen)"
+
+    image_img.short_description = "Thumb"
+    image_img.allow_tags = True
