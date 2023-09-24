@@ -73,7 +73,15 @@ class ProductoViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """
         Puedo filtrar por nombre, categoria, estado, atra vez de la url
-        ejemplo: http://localhost:8000/api/v1/nombre?
+        ejemplo:
+           FILTRAR POR NOMBRE DEL PRODUCTO
+           http://localhost:8000/api/v1/productos/?nombre=ajedrez
+
+           FILTRAR POR CATEGORIA
+           http://localhost:8000/api/v1/productos/?categoria=Juego
+
+           FILTRAR POR ESTADO DEL PRODUCTO
+           http://localhost:8000/api/v1/productos/?estado=usado
         """
         queryset = super().get_queryset()
 
@@ -120,10 +128,12 @@ class ProductoViewSet(viewsets.ModelViewSet):
             )
 
     def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=kwargs.pop("partial", False)
+        user = self.request.user
+
+        if user.aprobado:
+            return super().update(request, *args, **kwargs)
+
+        return Response(
+            {"error": "No tienes permisos para actualizar este recurso."},
+            status=status.HTTP_401_UNAUTHORIZED,
         )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)

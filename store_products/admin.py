@@ -22,6 +22,9 @@ class ProductoAdmin(admin.ModelAdmin):
     list_display = ["nombre", "estado", "mostrar_imagen"]
 
     def mostrar_imagen(self, obj):
+        """
+        Este metodo me permite poder visualizar la imagen imagen en mi administrador Django
+        """
         if obj.imagen:
             return format_html(
                 '<img src="{}" style="border-radius: 50%; width: 40px; height: 40px;" />',

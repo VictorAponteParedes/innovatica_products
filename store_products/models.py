@@ -41,12 +41,3 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre
-
-    def image_img(self):
-        if self.item_image:
-            return '<img src="%s" width="50" height="50" />' % self.imagen.url
-        else:
-            return "(Sin imagen)"
-
-    image_img.short_description = "Thumb"
-    image_img.allow_tags = True
